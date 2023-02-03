@@ -225,7 +225,8 @@ class PyTorchDistributedModelTrainingSequence:
                     "cuda_device_processor_count"
                 ] = cuda_device_properties.multi_processor_count
 
-            mlflow.log_params(logged_params)
+            # Disable explicit param logging - temporary workaround
+            # mlflow.log_params(logged_params)
 
     def setup_datasets(
         self,
@@ -277,7 +278,9 @@ class PyTorchDistributedModelTrainingSequence:
 
         if self.self_is_main_node:
             # MLFLOW: report relevant parameters using mlflow
-            mlflow.log_params({"num_classes": len(labels)})
+            # Disable explicit param logging - temporary workaround
+            pass
+            #mlflow.log_params({"num_classes": len(labels)})
 
     def setup_model(self, model):
         """Configures a model for training."""
@@ -300,7 +303,9 @@ class PyTorchDistributedModelTrainingSequence:
             )
         )
         if self.self_is_main_node:
-            mlflow.log_params({"model_param_count": round(params_count / 1e6, 2)})
+            # Disable explicit param logging - temporary workaround
+            pass
+            #mlflow.log_params({"model_param_count": round(params_count / 1e6, 2)})
 
         return self.model
 
