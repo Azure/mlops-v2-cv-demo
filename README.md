@@ -20,54 +20,56 @@ Clone this repository to your own GitHub organization and follow the steps below
 
 1. [Create an Azure Service Principal and configure GitHub actions secrets.](#configure-github-actions-secrets)
 2. [Configure dev and/or prod environments and create a dev branch.](#configure-azure-ml-environment-parameters)
-3. Execute workflow to create Azure ML infrastructure for dev and/or prod environments.
+3. [Execute workflow to create Azure ML infrastructure for dev and/or prod environments.](#deploy-azure-machine-learning-infrastructure)
 4. Execute workflow to create and execute a pytorch vision model training pipeline in Azure ML.
 5. Execute workflow to deploy the vision model as a real-time endpoint in Azure ML.  
 
+---
 
 ## Configure GitHub Actions Secrets
 
    This step creates a service principal and GitHub secrets to allow the GitHub action workflows to create and interact with Azure Machine Learning Workspace resources.
+   
+   From the command line, execute the following Azure CLI command with your choice of a service principal name:
+   
+   > `# az ad sp create-for-rbac --name <service_principal_name> --role contributor --scopes /subscriptions/<subscription_id> --sdk-auth`
+   
+   You will get output similar to below:
 
-      From the command line, execute the following Azure CLI command with your choice of a service principal name:
-      > `# az ad sp create-for-rbac --name <service_principal_name> --role contributor --scopes /subscriptions/<subscription_id> --sdk-auth`
+   >`{`  
+   > `"clientId": "<service principal client id>",`  
+   > `"clientSecret": "<service principal client secret>",`  
+   > `"subscriptionId": "<Azure subscription id>",`  
+   > `"tenantId": "<Azure tenant id>",`  
+   > `"activeDirectoryEndpointUrl": "https://login.microsoftonline.com",`  
+   > `"resourceManagerEndpointUrl": "https://management.azure.com/",`  
+   > `"activeDirectoryGraphResourceId": "https://graph.windows.net/",`  
+   > `"sqlManagementEndpointUrl": "https://management.core.windows.net:8443/",`  
+   > `"galleryEndpointUrl": "https://gallery.azure.com/",`  
+   > `"managementEndpointUrl": "https://management.core.windows.net/"`  
+   > `}`
+   
+   Copy all of this output, braces included. From your GitHub project, select **Settings**:
 
-      You will get output similar to below:
+   ![GitHub Settings](./images/gh-settings.png)
 
-      >`{`  
-      > `"clientId": "<service principal client id>",`  
-      > `"clientSecret": "<service principal client secret>",`  
-      > `"subscriptionId": "<Azure subscription id>",`  
-      > `"tenantId": "<Azure tenant id>",`  
-      > `"activeDirectoryEndpointUrl": "https://login.microsoftonline.com",`  
-      > `"resourceManagerEndpointUrl": "https://management.azure.com/",`  
-      > `"activeDirectoryGraphResourceId": "https://graph.windows.net/",`  
-      > `"sqlManagementEndpointUrl": "https://management.core.windows.net:8443/",`  
-      > `"galleryEndpointUrl": "https://gallery.azure.com/",`  
-      > `"managementEndpointUrl": "https://management.core.windows.net/"`  
-      > `}`
+   Then select **Secrets**, then **Actions**:
 
-      Copy all of this output, braces included.
+ ![GitHub Secrets](./images/gh-secrets.png)
 
-      From your GitHub project, select **Settings**:
+Select **New repository secret**. Name this secret **AZURE_CREDENTIALS** and paste the service principal output as the content of the secret.  Select **Add secret**.
 
-      ![GitHub Settings](./images/gh-settings.png)
+> **Note:**  
+> As this infrastructure is deployed using terraform, add the following additional GitHub secrets using the corresponding values from the service principal output as the content of the secret:  
+> 
+> **ARM_CLIENT_ID**  
+> **ARM_CLIENT_SECRET**  
+> **ARM_SUBSCRIPTION_ID**  
+> **ARM_TENANT_ID**  
 
-      Then select **Secrets**, then **Actions**:
+The GitHub configuration is complete.
 
-      ![GitHub Secrets](./images/gh-secrets.png)
-
-      Select **New repository secret**. Name this secret **AZURE_CREDENTIALS** and paste the service principal output as the content of the secret.  Select **Add secret**.
-
-      > **Note:**  
-      > As this infrastructure is deployed using terraform, add the following additional GitHub secrets using the corresponding values from the service principal output as the content of the secret:  
-      > 
-      > **ARM_CLIENT_ID**  
-      > **ARM_CLIENT_SECRET**  
-      > **ARM_SUBSCRIPTION_ID**  
-      > **ARM_TENANT_ID**  
-
-      The GitHub configuration is complete.
+---
 
 ## Configure Azure ML Environment Parameters
 
@@ -89,7 +91,9 @@ Clone this repository to your own GitHub organization and follow the steps below
    The first four values are used to create globally unique names for your Azure environment and contained resources. Edit these values to your liking then save, commit, push, or pr to update these files in the project repository. Leave `enable_monitoring` set to `false` for this demo. 
 
    As this is a deep learning workload, ensure your subscription and Azure location has available GPU compute. 
-      
+ 
+ ---
+
  ## Deploy Azure Machine Learning Infrastructure
 
    In your GitHub project repository, select **Actions**
@@ -112,6 +116,7 @@ Clone this repository to your own GitHub organization and follow the steps below
 
    Next, a model training pipeline and scoring endpoint will be deployed into the new Azure Machine Learning environment.
 
+---
 
 ## Contributing
 
